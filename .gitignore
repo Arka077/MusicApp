@@ -1,0 +1,21 @@
+# Prevent committing credentials and secrets in any subfolder
+**/.env
+**/.env.*
+!**/.env.example
+
+# Exclude local dependency directories
+**/node_modules/
+**/venv/
+**/env/
+**/.venv/
+**/dist/
+
+# Python compiled outputs
+**/__pycache__/
+**/*.pyc
+
+# IDEs and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+# Ignore environment variables containing secrets
+.env
+.env.local
+.env.production
+
+# Ignore dependencies
+node_modules/
+
+# Ignore log files
+*.log
+npm-debug.log*
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

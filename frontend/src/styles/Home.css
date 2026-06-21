@@ -1,0 +1,180 @@
+.home-dashboard {
+  max-width: 100%;
+  margin: 0;
+  padding: 48px 32px;
+  margin-bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  box-sizing: border-box;
+  background-color: #000000;
+}
+
+.home-hero-banner {
+  width: 100%;
+  background: #1c1c1e;
+  border-radius: 16px;
+  padding: 48px;
+  box-sizing: border-box;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-banner-content {
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.hero-tagline {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #86868b;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.hero-banner-content h1 {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+  color: #f5f5f7;
+}
+
+.hero-banner-content p {
+  color: #a1a1a6;
+  font-size: 17px;
+  line-height: 1.4;
+  margin: 8px 0 24px 0;
+  font-weight: 400;
+}
+
+.hero-action-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.home-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.metric-pill-card {
+  background: #1c1c1e;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-pill-card h2 {
+  font-size: 32px;
+  margin: 0;
+  font-weight: 700;
+  color: #f5f5f7;
+  letter-spacing: -0.02em;
+}
+
+.metric-pill-card small {
+  color: #86868b;
+  font-weight: 500;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.home-streams-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+}
+
+.home-stream-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.stream-section-header {
+  text-align: left;
+  border-bottom: 1px solid #2c2c2e;
+  padding-bottom: 12px;
+}
+
+.stream-section-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  color: #f5f5f7;
+  letter-spacing: -0.01em;
+}
+
+.stream-section-header p {
+  margin: 4px 0 0 0;
+  color: #86868b;
+  font-size: 15px;
+}
+
+.home-vibe-matrix-section {
+  text-align: left;
+  background: transparent;
+  padding: 0;
+  margin-top: 16px;
+}
+
+.home-vibe-matrix-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: #f5f5f7;
+}
+
+.home-vibe-matrix-section p {
+  margin: 4px 0 16px 0;
+  color: #86868b;
+  font-size: 15px;
+}
+
+.vibe-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vibe-capsule {
+  background: #2c2c2e;
+  color: #f5f5f7;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.vibe-capsule:hover {
+  background: #3a3a3c;
+}
+
+@media (max-width: 768px) {
+  .home-dashboard { padding: 32px 16px; }
+  .home-hero-banner { padding: 32px 24px; }
+  .hero-banner-content h1 { font-size: 32px; }
+  .hero-action-row { flex-direction: column; align-items: flex-start; }
+  .hero-action-row button, .hero-action-row a { width: 100%; box-sizing: border-box; }
+}

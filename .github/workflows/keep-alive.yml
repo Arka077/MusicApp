@@ -1,0 +1,25 @@
+name: Keep Services Awake
+
+on:
+  schedule:
+    # Runs every 24 hours (at 00:00 UTC / 05:30 AM IST)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows you to manually trigger it from the "Actions" tab on GitHub
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Hugging Face Space
+        # TODO: Replace 'your_hf_username' and 'your_space_name' with your actual details
+        # Hugging Face direct endpoints are structured as: https://username-space-name.hf.space
+        run: |
+          echo "Pinging Hugging Face Space..."
+          curl -sL -w "HTTP Status: %{http_code}\n" https://your_hf_username-your_space_name.hf.space/health -o /dev/null
+
+      - name: Ping Backend API
+        # TODO: Replace with your actual deployed Render/Railway backend URL
+        # We ping /api/auth/profile (or any endpoint) to wake it up
+        run: |
+          echo "Pinging Backend Express Server..."
+          curl -sL -w "HTTP Status: %{http_code}\n" https://your-backend-api-url.onrender.com/api/auth/profile -o /dev/null

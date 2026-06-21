@@ -1,0 +1,29 @@
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* Kept left aligned to match overall theme */
+  padding: 64px 32px;
+  color: #86868b;
+}
+
+.spinner {
+  border: 3px solid #2c2c2e;
+  border-top: 3px solid #f5f5f7; /* High contrast flat spinner */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner-container p {
+  font-size: 15px;
+  font-weight: 500;
+  color: #86868b;
+}

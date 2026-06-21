@@ -1,0 +1,319 @@
+.playlists-page,
+.playlist-container {
+  padding: 48px 32px;
+  max-width: 100%;
+  margin: 0;
+  margin-bottom: 120px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.playlists-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.playlists-header > div { text-align: left; }
+
+.playlists-header h2,
+.playlist-card-form h2 {
+  color: #f5f5f7;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px 0;
+}
+
+.subtitle { color: #86868b; font-size: 15px; margin: 0; }
+
+.playlist-card-form {
+  background: #1c1c1e;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 600px;
+  margin: 0 0 40px 0; /* Left aligned, not auto-centered */
+}
+
+.playlists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.playlist-item-card {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.playlist-cover-placeholder {
+  background: #1c1c1e;
+  aspect-ratio: 1/1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #86868b;
+  font-size: 32px;
+}
+
+.playlist-card-meta h4 {
+  color: #f5f5f7;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 2px 0;
+}
+
+.playlist-desc {
+  color: #86868b;
+  font-size: 14px;
+  margin: 0 0 8px 0;
+}
+
+.privacy-badge {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  background: #2c2c2e;
+  color: #86868b;
+}
+
+/* Playlist Detail View */
+.playlist-detail-header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 32px;
+  background: transparent;
+  padding: 0 0 40px 0;
+  border: none;
+  margin-bottom: 0;
+}
+
+.playlist-detail-cover {
+  width: 200px;
+  height: 200px;
+  background: #1c1c1e;
+  border-radius: 16px;
+}
+
+.playlist-detail-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.track-list-table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-header-row,
+.track-row {
+  display: grid;
+  grid-template-columns: 40px 2fr 1fr 120px;
+  align-items: center;
+  padding: 12px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 1px solid #1c1c1e; /* Extremely subtle */
+}
+
+.table-header-row {
+  color: #86868b;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 1px solid #2c2c2e;
+}
+
+.track-row { transition: background 0.15s; border-radius: 8px; border-bottom: none;}
+.track-row:hover { background: #1c1c1e; }
+
+.track-index { color: #86868b; font-variant-numeric: tabular-nums; }
+.track-title-text { color: #f5f5f7; font-weight: 500; font-size: 15px; }
+.track-artist-text { color: #86868b; font-size: 14px; }
+.track-album-text { color: #86868b; font-size: 14px; }
+
+@media (max-width: 768px) {
+  .playlists-page, .playlist-container { padding: 32px 16px; }
+  .playlist-detail-header { flex-direction: column; align-items: center; text-align: center; gap: 24px;}
+  .playlist-detail-meta { align-items: center; text-align: center;}
+  .table-header-row { display: none; } /* Hide headers on mobile */
+  .track-row { grid-template-columns: 30px 1fr 120px; }
+  .track-album-text { display: none; }
+}
+
+/* Track Actions & Button styling */
+.track-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.delete-btn-inline {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.delete-btn-inline svg {
+  fill: #86868b;
+  transition: fill 0.2s;
+}
+
+.delete-btn-inline:hover svg {
+  fill: #ff453a;
+}
+
+/* Playlist Edit Modal styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background: #1c1c1e;
+  border: 1px solid #2c2c2e;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  box-sizing: border-box;
+  animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-content h3 {
+  color: #f5f5f7;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  text-align: left;
+}
+
+.modal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.modal-form-group label {
+  color: #86868b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.modal-input {
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  color: #f5f5f7;
+  padding: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-input:focus {
+  border-color: #64748b;
+}
+
+.modal-textarea {
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  color: #f5f5f7;
+  padding: 12px;
+  font-size: 15px;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.modal-textarea:focus {
+  border-color: #64748b;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-save {
+  background: #f5f5f7;
+  color: #1c1c1e;
+  border: none;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save:hover {
+  background: #ffffff;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #f5f5f7;
+  border: 1px solid #3a3a3c;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+}

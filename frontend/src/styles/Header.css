@@ -1,0 +1,73 @@
+.header {
+  background: rgba(28, 28, 30, 0.85); /* Apple style translucent nav */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid #2c2c2e;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 100%;
+  padding: 0 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px; /* Slightly slimmer modern height */
+  box-sizing: border-box;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fa243c;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.logo:hover {
+  opacity: 0.8;
+}
+
+.nav {
+  display: flex;
+  gap: 32px;
+  flex: 1;
+  margin-left: 48px;
+  align-items: center;
+}
+
+.nav-link {
+  color: #86868b;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #f5f5f7;
+}
+
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-name {
+  color: #86868b;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 16px;
+  }
+  .nav {
+    display: none; /* Consider a hamburger menu for mobile */
+  }
+}

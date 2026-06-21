@@ -1,0 +1,70 @@
+/* Upload.css */
+.upload-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+  padding: 64px 32px;
+  box-sizing: border-box;
+  min-height: 80vh;        /* Vertically centered layout */
+}
+
+.upload-box {
+  background: #1c1c1e;
+  padding: 48px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px; /* Slight wider card for song details form */
+  text-align: left;
+}
+
+.upload-box h2 {
+  color: #f5f5f7;
+  margin-bottom: 32px;
+  text-align: left;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.form-group label {
+  color: #86868b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="file"] {
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  color: #f5f5f7;
+  padding: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: #64748b;
+}
+
+.file-info {
+  font-size: 13px;
+  color: #30d158;
+  margin: 4px 0 0 0;
+}
+
+@media (max-width: 768px) {
+  .upload-container { justify-content: center; padding: 32px 16px; }
+  .upload-box { padding: 32px; }
+}

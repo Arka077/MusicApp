@@ -1,0 +1,126 @@
+.library {
+  padding: 48px 32px;
+  max-width: 100%;
+  margin: 0;
+  margin-bottom: 120px;
+  box-sizing: border-box;
+}
+
+.library-header {
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.library-header h2 {
+  color: #f5f5f7;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.search-form {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.search-form input {
+  flex: 1;
+  max-width: 400px;
+  /* Styling inherited from global.css form-group input */
+}
+
+.music-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+  width: 100%;
+  justify-content: start;
+  justify-items: start;
+}
+
+.music-grid > * {
+  margin-left: 0 !important;
+  text-align: left;
+  width: 100%;
+}
+
+/* Flattened AI Search to fit the ecosystem */
+.ai-search-wrapper {
+  background: #1c1c1e;
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.ai-search-badge {
+  display: inline-block;
+  background: #2c2c2e;
+  color: #a855f7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.ai-search-subtitle {
+  color: #86868b;
+  font-size: 15px;
+  margin: 0 0 24px 0;
+}
+
+.ai-search-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ai-search-input-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ai-search-input {
+  width: 100%;
+  background: #000000;
+  border: 1px solid #2c2c2e;
+  border-radius: 12px;
+  padding: 14px 40px 14px 16px;
+  color: #f5f5f7;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ai-search-input:focus {
+  border-color: #a855f7;
+}
+
+.ai-search-btn {
+  background: #a855f7;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ai-search-btn:hover { background: #9333ea; }
+.ai-results-section { margin-top: 24px; border-top: 1px solid #2c2c2e; padding-top: 24px; }
+.ai-results-label { color: #86868b; font-size: 14px; font-weight: 600; text-transform: uppercase; }
+
+@media (max-width: 768px) {
+  .library { padding: 32px 16px; }
+  .search-form, .ai-search-form { flex-direction: column; align-items: stretch; }
+  .search-form input { max-width: 100%; }
+  .music-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}

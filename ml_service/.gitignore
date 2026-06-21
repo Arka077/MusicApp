@@ -1,0 +1,15 @@
+# Ignore environment variables containing secrets
+.env
+
+# Ignore python virtual environments and dependencies
+venv/
+env/
+.venv/
+
+# Ignore compiled python files and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
