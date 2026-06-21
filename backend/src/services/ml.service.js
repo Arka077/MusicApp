@@ -1,23 +1,26 @@
 const axios = require("axios");
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || "http://localhost:8000";
+
+const rawUrl = process.env.ML_SERVICE_URL;
+
+const ML_SERVICE_URL = rawUrl.replace(/\/$/, "");
 
 const mlService = {
-  // Called after artist uploads — fire and forget
+
   indexSong: async (musicId, audioUrl) => {
-    await axios.post(`${ML_SERVICE_URL}/index`, {
+    await axios.post(`${ML_SERVICE_URL}/api/index`, {
       music_id: musicId,
       audio_url: audioUrl,
     });
   },
 
-  // Called when user searches
+
   search: async (query, topK = 10) => {
-    const response = await axios.post(`${ML_SERVICE_URL}/search`, {
+    const response = await axios.post(`${ML_SERVICE_URL}/api/search`, {
       query,
       top_k: topK,
     });
-    return response.data.results; // [{music_id, score}, ...]
+    return response.data.results; 
   },
 };
 
