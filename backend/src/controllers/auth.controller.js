@@ -40,7 +40,9 @@ async function registerUser(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(201).json({
@@ -104,7 +106,9 @@ async function loginUser(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.json({
@@ -169,7 +173,11 @@ async function updateProfile(req, res) {
 }
 
 async function logoutUser(req, res) {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
   return res.json({
     message: "User logged out successfully",
   });
