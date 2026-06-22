@@ -10,17 +10,23 @@ class SearchRequest(BaseModel):
 
 @router.post("/search")
 async def search(request: SearchRequest):
-    """
-    User types a query → returns ranked list of music_ids
-    Node.js uses these IDs to fetch metadata from MySQL
-    """
-    if not request.query.strip():
+    if not request.query or not request.query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty")
-
+        
     try:
+        print("\n--- SEARCH REQUEST ---", flush=True)
+        print("QUERY:", request.query, flush=True)
+        
         query_vector = encoder.embed_text(request.query)
-        results      = qdrant.search(query_vector, top_k=request.top_k)
+        print("EMBED DONE:", query_vector.shape, flush=True)
+        
+        results = qdrant.search(query_vector, top_k=request.top_k)
+        print("QDRANT RESULTS:", results, flush=True)
+        
         return {"results": results}
-
+        
     except Exception as e:
+        import traceback
+        print("\n❌ SEARCH ERROR:", flush=True)
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
