@@ -3,162 +3,146 @@ import numpy as np
 import requests
 import tempfile
 import os
-from transformers import AutoProcessor, ClapModel
 import librosa
+from transformers import AutoProcessor, ClapModel
+from huggingface_hub import hf_hub_download
 
-# ─── Constants ───────────────────────────────────────────
-MODEL_ID     = "laion/larger_clap_music_and_speech"
-TARGET_SR    = 48000
-CLIP_SAMPLES = TARGET_SR * 10  # 10 seconds = 480000 samples
+MODEL_ID = "laion/larger_clap_music_and_speech"
+TARGET_SR = 48000
+CLIP_SAMPLES = TARGET_SR * 10
 
-# ─── Module-level singletons ─────────────────────────────
-_model     = None
+_model = None
 _processor = None
-_device    = None
+_device = None
+_pca_data = None
 
-def load_model():
+# ---------------------------
+# MODEL LOADING
+# ---------------------------
+def ensure_model():
     global _model, _processor, _device
-    _device    = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    _model     = ClapModel.from_pretrained(MODEL_ID).to(_device)
-    _processor = AutoProcessor.from_pretrained(MODEL_ID)
-    _model.eval()
-    print(f"   Model running on: {_device}")
+    if _model is None:
+        print("🚀 Loading CLAP model...", flush=True)
+        _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        _model = ClapModel.from_pretrained(MODEL_ID).to(_device)
+        _processor = AutoProcessor.from_pretrained(MODEL_ID)
+        _model.eval()
+        print(f"✅ CLAP loaded on {_device}", flush=True)
 
-# ─── Audio helpers ────────────────────────────────────────
+def load_pca():
+    global _pca_data
+    if _pca_data is None:
+        print("📊 Loading PCA...", flush=True)
+        path = hf_hub_download(
+            repo_id="arka7/music-pca-model",
+            filename="pca_model.npy"
+        )
+        _pca_data = np.load(path, allow_pickle=True).item()
+        print("✅ PCA loaded", flush=True)
 
+# ---------------------------
+# AUDIO HELPERS
+# ---------------------------
 def _download_audio(url: str) -> str:
-    """Download audio from ImageKit URL to a temp file, return path"""
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-
-    # Write to temp file with .mp3 extension so torchaudio knows the format
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-    tmp.write(response.content)
+    tmp.write(r.content)
     tmp.close()
     return tmp.name
 
-def _load_and_resample(file_path: str) -> torch.Tensor:
-    """Load audio and convert to mono 48kHz"""
+def _load_audio(path: str):
+    audio, _ = librosa.load(path, sr=TARGET_SR, mono=True)
+    return torch.tensor(audio, dtype=torch.float32).unsqueeze(0)
 
-    audio, sr = librosa.load(
-        file_path,
-        sr=TARGET_SR,
-        mono=True
-    )
-
-    waveform = torch.tensor(audio, dtype=torch.float32).unsqueeze(0)
-
-    return waveform
-
-def _chunk_waveform(waveform: torch.Tensor) -> list:
-    """Split waveform into 10s chunks, discard remainder"""
-    total      = waveform.shape[1]
-    num_chunks = total // CLIP_SAMPLES
-    chunks     = []
-
-    for i in range(num_chunks):
+def _chunk(waveform):
+    total = waveform.shape[1]
+    n = total // CLIP_SAMPLES
+    chunks = []
+    for i in range(n):
         start = i * CLIP_SAMPLES
-        chunk = waveform[:, start:start + CLIP_SAMPLES].squeeze().numpy()
+        end = (i + 1) * CLIP_SAMPLES
+        chunk = waveform[:, start:end].squeeze().numpy()
         chunks.append(chunk)
-
     return chunks
 
+# ---------------------------
+# EMBEDDING CORE
+# ---------------------------
 @torch.no_grad()
-def _embed_chunks(chunks: list) -> np.ndarray:
-    """Embed a list of audio chunks, returns (N, 512) array"""
+def _embed_chunks(chunks):
+    ensure_model()
     inputs = _processor(
         audio=chunks,
         sampling_rate=TARGET_SR,
         return_tensors="pt"
     ).to(_device)
-
-    output = _model.get_audio_features(**inputs)
-
-    if hasattr(output, 'audio_embeds'):
-        features = output.audio_embeds
-    elif hasattr(output, 'pooler_output'):
-        features = output.pooler_output
+    
+    features = _model.get_audio_features(**inputs)
+    
+    if isinstance(features, torch.Tensor):
+        emb = features
     else:
-        features = output
+        emb = features
+        
+    emb = emb / emb.norm(dim=-1, keepdim=True)
+    return emb.cpu().numpy()
 
-    features = features / features.norm(dim=-1, keepdim=True)
-    return features.cpu().numpy()
+def _apply_pca(x):
+    load_pca()
+    mean = _pca_data["mean"]
+    comp = _pca_data["components"]
+    
+    x = x - mean
+    x = x @ comp.T
+    
+    norm = np.linalg.norm(x, axis=1, keepdims=True) + 1e-8
+    x = x / norm
+    return x.astype(np.float32)
 
-# ─── PCA ─────────────────────────────────────────────────
-
-_pca_data = None
-
-def load_pca():
-    global _pca_data
-    pca_path = os.path.join(os.path.dirname(__file__), "../models/pca_model.npy")
-    _pca_data = np.load(pca_path, allow_pickle=True).item()
-    print("✅ PCA model loaded")
-
-def _apply_pca(embeddings_512: np.ndarray) -> np.ndarray:
-    """Compress 512D → 128D using saved PCA transform"""
-    mean       = _pca_data["mean"]
-    components = _pca_data["components"]
-    compressed = (embeddings_512 - mean) @ components.T
-    compressed = compressed / np.linalg.norm(compressed, axis=1, keepdims=True)
-    return compressed.astype(np.float32)
-
-# ─── Public API ───────────────────────────────────────────
-
-def embed_audio_from_url(audio_url: str) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Download audio from URL, chunk it, embed each chunk.
-    Returns:
-        chunk_embeddings_128d: (N, 128) array — for Qdrant
-        song_embedding_128d:   (1, 128) array — averaged song vector
-    """
-    if _pca_data is None:
-        load_pca()
-
-    # Download to temp file
-    tmp_path = _download_audio(audio_url)
-
+# ---------------------------
+# PUBLIC API
+# ---------------------------
+def embed_audio_from_url(url):
+    tmp = _download_audio(url)
     try:
-        waveform = _load_and_resample(tmp_path)
-        chunks   = _chunk_waveform(waveform)
-
-        if not chunks:
-            raise ValueError("Audio too short — less than 10 seconds")
-
-        # Embed all chunks in one batch
-        embeddings_512 = _embed_chunks(chunks)
-
-        # PCA compress
-        embeddings_128 = _apply_pca(embeddings_512)
-
-        # Song-level: average all chunks then renormalize
-        song_embedding = np.mean(embeddings_128, axis=0, keepdims=True)
-        song_embedding = song_embedding / np.linalg.norm(song_embedding)
-
-        return embeddings_128, song_embedding
-
+        waveform = _load_audio(tmp)
+        chunks = _chunk(waveform)
+        
+        if len(chunks) == 0:
+            raise ValueError("Audio too short (< 10s chunks)")
+            
+        emb512 = _embed_chunks(chunks)
+        emb128 = _apply_pca(emb512)
+        
+        song = np.mean(emb128, axis=0, keepdims=True)
+        song = song / (np.linalg.norm(song) + 1e-8)
+        
+        return emb128, song
     finally:
-        os.unlink(tmp_path)  # Always clean up temp file
+        os.unlink(tmp)
 
-@torch.no_grad()
-def embed_text(query: str) -> np.ndarray:
-    """
-    Encode a text query to 128D.
-    Returns: (1, 128) array
-    """
-    if _pca_data is None:
-        load_pca()
-
-    inputs = _processor(text=[query], return_tensors="pt").to(_device)
-    output = _model.get_text_features(**inputs)
-
-    if hasattr(output, 'text_embeds'):
-        text_emb = output.text_embeds
-    elif hasattr(output, 'pooler_output'):
-        text_emb = output.pooler_output
+def embed_text(query: str):
+    ensure_model()
+    load_pca()
+    
+    inputs = _processor(
+        text=[query],
+        return_tensors="pt"
+    ).to(_device)
+    
+    # We use torch.no_grad() or detach() to prevent the gradient error
+    with torch.no_grad():
+        features = _model.get_text_features(**inputs)
+    
+    if isinstance(features, torch.Tensor):
+        emb = features
     else:
-        text_emb = output
-
-    text_emb = text_emb / text_emb.norm(dim=-1, keepdim=True)
-    text_np  = text_emb.cpu().numpy()
-
-    return _apply_pca(text_np)
+        emb = features
+        
+    emb = emb / emb.norm(dim=-1, keepdim=True)
+    
+    # ADDED .detach() BEFORE .cpu()
+    emb = emb.detach().cpu().numpy() 
+    
+    return _apply_pca(emb)
