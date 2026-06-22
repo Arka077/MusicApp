@@ -9,11 +9,14 @@ import "../styles/Playlists.css";
 export const AlbumDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [album, setAlbum] = useState(null);
   const [loading, setLoading] = useState(true);
   const { play } = useMusic();
   const { user } = useAuth();
 
+  const fromAlbumsPage = location.state?.fromAlbumsPage;
+  
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editCoverFile, setEditCoverFile] = useState(null);
@@ -98,13 +101,15 @@ export const AlbumDetails = () => {
 
   return (
     <div className="playlist-container">
-      <button
-        className="btn btn-secondary"
-        onClick={() => navigate("/artist/albums")}
-        style={{ marginBottom: "20px" }}
-      >
-        ← Back to Albums
-      </button>
+     {fromAlbumsPage && (
+        <button
+          className="btn btn-secondary"
+          onClick={() => navigate("/artist/albums")}
+          style={{ marginBottom: "20px" }}
+        >
+          ← Back to Albums
+        </button>
+      )}
 
       <div className="playlist-detail-header">
         {album.cover_url ? (
