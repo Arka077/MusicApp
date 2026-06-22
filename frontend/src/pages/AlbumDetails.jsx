@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import apiClient from "../services/api";
 import { useMusic } from "../hooks/useMusic";
 import { useAuth } from "../hooks/useAuth";
