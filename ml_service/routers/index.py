@@ -9,24 +9,25 @@ class IndexRequest(BaseModel):
     audio_url: str
 
 def _index_song_task(music_id: int, audio_url: str):
-    """Background task — runs after Node.js already got its response"""
     try:
-        print(f"🎵 Indexing song {music_id}...")
+        print(f"\n🎵 Indexing song {music_id}", flush=True)
         chunk_embeddings, _ = encoder.embed_audio_from_url(audio_url)
+        print("Chunks:", chunk_embeddings.shape, flush=True)
         qdrant.upsert_song_chunks(music_id, chunk_embeddings)
-        print(f"✅ Song {music_id} indexed — {len(chunk_embeddings)} chunks")
+        print(f"✅ Indexed song {music_id}", flush=True)
     except Exception as e:
-        print(f"❌ Failed to index song {music_id}: {e}")
+        import traceback
+        print(f"\n❌ INDEX ERROR for {music_id}", flush=True)
+        print(traceback.format_exc())
 
 @router.post("/index")
 async def index_song(request: IndexRequest, background_tasks: BackgroundTasks):
-    """
-    Node.js calls this after successful upload.
-    Returns immediately — indexing happens in background.
-    """
     background_tasks.add_task(
         _index_song_task,
         request.music_id,
         request.audio_url
     )
-    return {"status": "accepted", "music_id": request.music_id}
+    return {
+        "status": "accepted",
+        "music_id": request.music_id
+    }
