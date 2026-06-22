@@ -46,7 +46,7 @@ export const YourAlbums = () => {
             <div
               key={album.album_id}
               className="playlist-item-card"
-              onClick={() => navigate(`/artist/albums/${album.album_id}`)}
+              onClick={() => navigate(`/artist/albums/${album.album_id}`, { state: { fromAlbumsPage: true } })}
               style={{
                 background: "#1e1e2e",
                 padding: "16px",
